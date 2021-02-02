@@ -9,8 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 2ef293a91133043d58c8de96679ec072, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: Assembly-CSharp::GameSettings
-  Row: 0
-  Column: 0
+  row: 9
+  column: 8
+  colorScale:
+  - serializedVersion: 2
+    rgba: 4278190335
+  - serializedVersion: 2
+    rgba: 4278255384
+  - serializedVersion: 2
+    rgba: 4294938112
+  - serializedVersion: 2
+    rgba: 4278220543
+  - serializedVersion: 2
+    rgba: 4293656831
