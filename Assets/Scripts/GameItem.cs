@@ -7,7 +7,7 @@ using DG.Tweening;
 public class GameItem : MonoBehaviour
 {
     SpriteRenderer spriteRenderer;
-
+    public GameObject focusObject;
     public Vector2 gridIndex;
     private int itemColor;
     public int ItemColor
@@ -21,6 +21,7 @@ public class GameItem : MonoBehaviour
             itemColor = value;
         }
     }
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -30,13 +31,17 @@ public class GameItem : MonoBehaviour
     {
         Vector3 pos = transform.position;
         transform.position += (Vector3.up * 10);
-        MoveNewPos(pos, 0.75f);
+        MoveNewPos(pos, 0.55f);
     }
 
     private void OnMouseUpAsButton()
     {
-        int x = this;
-        Debug.Log(x);
+        GameManager.instance.runtimeVars.grid.ItemSelected(this);
+    }
+
+    public void FocusUnFocus(bool status)
+    {
+        focusObject.SetActive(status);
     }
 
     public static implicit operator int(GameItem itemx)
@@ -50,9 +55,12 @@ public class GameItem : MonoBehaviour
         Debug.Log("sliced");
         Destroy(gameObject);
     }
-
+     
     public void MoveNewPos(Vector3 _pos,float _time)
     {
-        transform.DOMove(_pos, _time);
+        transform.DOMove(_pos, _time).OnComplete(() =>
+        {
+            AudioManager.PlayOneShotAudio("itemhit");
+        }).SetEase(Ease.Flash);
     }
 }
