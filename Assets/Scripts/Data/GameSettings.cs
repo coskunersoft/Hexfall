@@ -9,4 +9,5 @@ public class GameSettings : ScriptableObject
     public int column;
     public Color32[] colorScale;
     public int ItemCount { get { return row * column; } }
+    public int scoreReward;
 }

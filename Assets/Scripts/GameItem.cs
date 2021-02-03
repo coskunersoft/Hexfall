@@ -27,7 +27,12 @@ public class GameItem : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+
     private void Start()
+    {
+        FallDown();
+    }
+    public void FallDown()
     {
         Vector3 pos = transform.position;
         transform.position += (Vector3.up * 10);
@@ -53,7 +58,9 @@ public class GameItem : MonoBehaviour
     public void Slice()
     {
         Debug.Log("sliced");
-        Destroy(gameObject);
+        ParticleManager.instance.ShowBreakParticle(transform.position,spriteRenderer.color);
+        this.PushToCamp();
+        
     }
      
     public void MoveNewPos(Vector3 _pos,float _time)

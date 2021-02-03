@@ -54,6 +54,42 @@ public static class Utilities
         }
     }
 
+    public static int MatchCount(this List<int> list,List<int> Other)
+    {
+        return list.Count(x => Other.Any(y => y==x));
+    }
+    public static List<int> CombineDiff(this List<int> list, List<int> Other)
+    {
+        List<int> result = new List<int>();
+        foreach (var item in list)
+        {
+            result.Add(item);
+        }
+        foreach (var item in Other)
+        {
+            if (!result.Any(ro => ro==item)) result.Add(item);
+        }
+        return result;
+    }
+
+    public static void PushToCamp<T>(this T o)where T:Object
+    {
+        ObjectCamp.instance.TakeObjecy(o);
+    }
+
+    public static int RandomintegerWithIgnore(int start,int end,List<int> ignore)
+    {
+        List<int> numbers = new List<int>();
+        for (int i = start; i < end; i++)
+        {
+            numbers.Add(i);
+        }
+        numbers.RemoveAll(x => ignore.Any(ro => ro == x));
+        return numbers[Random.Range(0, numbers.Count)];
+    }
+   
+    
+ 
     public static System.Func<GameItem, GameGrid, List<int>> PatternRule(this Pattern pattern) 
     {
         System.Func<GameItem, GameGrid, List<int>> mainresult = null;
@@ -126,5 +162,4 @@ public static class Utilities
         return mainresult;
     }
 
-  
 }

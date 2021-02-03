@@ -25,3 +25,6 @@ MonoBehaviour:
     rgba: 4278220543
   - serializedVersion: 2
     rgba: 4293656831
+  - serializedVersion: 2
+    rgba: 4279031778
+  scoreReward: 5

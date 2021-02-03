@@ -8,6 +8,7 @@ public class GameGrid
 {
     public GameGrid(int _row,int _column)
     {
+        isBusy = true;
         row = _row;
         column = _column;
         items = new List<GameItem>();
@@ -36,19 +37,42 @@ public class GameGrid
 
     public bool SliceControl()
     {
-        List<int> allSliceds = new List<int>();
+        List<List<int>> allSliceds = new List<List<int>>();
         var sliceRule = GameManager.instance.runtimeVars.selectedPattern.PatternRule();
         foreach (var item in items)
         {
             List<int> Sliceds = sliceRule.Invoke(item, this);
-            allSliceds.AddRange(Sliceds);
+            bool added = false;
+            for (int i = 0; i < allSliceds.Count; i++)
+            {
+                if (allSliceds[i].MatchCount(Sliceds)>0)
+                {
+                    Debug.Log("MatchCountFinded");
+                    List<int> total=allSliceds[i].CombineDiff(Sliceds);
+                    allSliceds[i].Clear();
+                    allSliceds[i].AddRange(total);
+                    added = true;
+                    break;
+                }
+            }
+            if (Sliceds.Count>0&&!added)
+            {
+                allSliceds.Add(Sliceds);
+            }
         }
+
+        Debug.Log("Total " + allSliceds.Count + " group");
+
         foreach (var item in allSliceds)
         {
-            GameItem itemx = this[item];
-            if (!itemx) continue;
-            itemx.Slice();
-            RemoveItem(itemx);
+            List<GameItem> DestroyingItems = item.ConvertAll(x => this[x]);
+            if (DestroyingItems.Any(x => x == -1)) continue;
+            GameManager.instance.OnSliced(DestroyingItems.Count,DestroyingItems.CenterPositionofItems());
+            foreach (var item2 in DestroyingItems)
+            {
+                item2.Slice();
+                RemoveItem(item2);
+            }
         }
         bool result = allSliceds.Count > 0;
         if (result)
@@ -139,7 +163,11 @@ public class GameGrid
 
     public void Deselect()
     {
-        selectData.LastSelected.ForEach(x => x.FocusUnFocus(false));
+        selectData.LastSelected.ForEach(x =>
+        {
+            x.transform.SetParent(null);
+            x.FocusUnFocus(false);
+        });
         selectData.isSelected = false;
         selectData.LastSelected = new List<GameItem>();
         GameManager.instance.OnGroupSelectCancel();
@@ -156,10 +184,9 @@ public class GameGrid
             rotationfactor = -rotationfactor;
         }
 
-      
 
-        GameObject rotcenter = new GameObject();
-        rotcenter.transform.position = selectData.LastSelected.CenterPositionofItems();
+
+        Transform rotcenter = GameManager.instance.runtimeVars.selectionCenter;
         selectData.LastSelected.ForEach(ro => ro.transform.SetParent(rotcenter.transform));
 
         IEnumerator rotate()
@@ -167,6 +194,8 @@ public class GameGrid
             bool issliced = false;
             for (int i = 0; i < selectData.LastSelected.Count; i++)
             {
+                AudioManager.PlayOneShotAudio("swipe");
+
                 List<System.Tuple<Vector2, Vector3>> ObjectPositions = selectData.LastSelected.ConvertAll(x => new System.Tuple<Vector2, Vector3>(x.gridIndex, x.transform.position));
                 selectData.LastSelected.SlideListOneStep(_swipdir == SwipeDirection.Left);
                 Vector3 rot = rotcenter.transform.eulerAngles + new Vector3(0, 0, rotationfactor);
