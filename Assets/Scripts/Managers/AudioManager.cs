@@ -18,6 +18,11 @@ public class AudioManager : MonoBehaviour
         temp = new Dictionary<string, AudioClip>();
     }
 
+    /// <summary>
+    /// Retuns oneshot audioclip by searching from the list 
+    /// </summary>
+    /// <param name="_id">ID number you give to the sound in inspector </param>
+    /// <returns></returns>
     private AudioClip GetOneShotAudio(string _id)
     {
         AudioClip clip = null;
@@ -36,12 +41,20 @@ public class AudioManager : MonoBehaviour
         }
         return clip;
     }
+
+    /// <summary>
+    /// Plays oneshot audioclip by searching from the list 
+    /// </summary>
+    /// <param name="_id"></param>
     public static void PlayOneShotAudio(string _id)
     {
         AudioClip clip=instance.GetOneShotAudio(_id);
         instance.mainSource.PlayOneShot(clip);
     }
 
+    /// <summary>
+    /// Profile class for associating audio files with identification number 
+    /// </summary>
     [System.Serializable]
     public class AudioProfile
     {

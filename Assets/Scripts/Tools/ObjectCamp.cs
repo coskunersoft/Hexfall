@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// A kind of self-expanding pool system  ;)
+/// </summary>
 public class ObjectCamp : MonoBehaviour
 {
     public static ObjectCamp instance;
@@ -30,6 +33,8 @@ public class ObjectCamp : MonoBehaviour
         pushActions.Add(new System.Tuple<System.Type, System.Action<Object>>(typeof(GameItem), (Object o) =>
         {
             GameItem objectx = o as GameItem;
+            objectx.ShowHideStar(false);
+            objectx.SetBombStyle(false);
             objectx.gameObject.SetActive(false);
             objectx.transform.position = Vector3.zero;
         }));
@@ -53,6 +58,9 @@ public class ObjectCamp : MonoBehaviour
         }));
     }
 
+    /// <summary>
+    /// Returns an object from the pool simply by specifying its type
+    /// </summary>
     public T GetObject<T>() where T: Object
     {
         T result = default;
@@ -74,7 +82,9 @@ public class ObjectCamp : MonoBehaviour
         }
         return result;
     }
-
+    /// <summary>
+    /// Pulls an object back into the pool
+    /// </summary>
     public void TakeObjecy<T>(T O) where T:Object
     {
         allFreeObjects.Add(O);

@@ -28,3 +28,4 @@ MonoBehaviour:
   - serializedVersion: 2
     rgba: 4279031778
   scoreReward: 5
+  starItemFrequency: 12

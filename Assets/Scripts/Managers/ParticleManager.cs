@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Tool For displaying particles
+/// </summary>
 public class ParticleManager : MonoBehaviour
 {
     public static ParticleManager instance;
@@ -10,7 +13,9 @@ public class ParticleManager : MonoBehaviour
         instance = this;
     }
     public GameObject particleBreak;
-
+    /// <summary>
+    /// Shatter effect is shown when game objects are destroyed 
+    /// </summary>
     public void ShowBreakParticle(Vector3 pos,Color color)
     {
         ParticleSystem created = Instantiate(particleBreak, pos, Quaternion.identity).GetComponent<ParticleSystem>();

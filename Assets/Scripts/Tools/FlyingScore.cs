@@ -8,6 +8,9 @@ public class FlyingScore : MonoBehaviour
 {
     public TextMeshPro textComponent;
 
+    /// <summary>
+    /// Timed, move up and opacity reduction function made to give an effective air to score effects
+    /// </summary>
     private void Fly()
     {
         Color x = textComponent.color;
@@ -23,8 +26,10 @@ public class FlyingScore : MonoBehaviour
             this.PushToCamp();
         });
     }
-    
 
+    /// <summary>
+    /// Customized operator for easier text writing to Textmesh component 
+    /// </summary>
     public static FlyingScore operator+(FlyingScore x, string y)
     {
         x.textComponent.text = y;
