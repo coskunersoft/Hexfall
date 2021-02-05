@@ -485,6 +485,12 @@ public class GameManager : MonoBehaviour
 
 /// <summary>
 /// Game Patterns for grouping and destroying items
+///
+///
+///The patterns will inform the selection of the hexagons in the game
+///and with the special selection rules created according to these patterns,
+///new designs can be added to the game very easily in the future.
+/// 
 /// </summary>
 public enum Pattern
 {

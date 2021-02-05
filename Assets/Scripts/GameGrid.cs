@@ -48,7 +48,7 @@ public class GameGrid
     public bool DestructionControl()
     {
         //Make an integer list inside list
-        List<List<int>> allSliceds = new List<List<int>>();
+        List<List<int>> allDestructionGroups = new List<List<int>>();
         //Find the elimination rule based on the selected pattern 
         var sliceRule = GameManager.instance.runtimeVars.selectedPattern.PatternRule();
         //Loops as long as all items
@@ -59,41 +59,62 @@ public class GameGrid
             //make a control boolen for process control 
             bool added = false;
 
-            for (int i = 0; i < allSliceds.Count; i++)
+            //loop as many groups as previously found 
+            for (int i = 0; i < allDestructionGroups.Count; i++)
             {
-                if (allSliceds[i].MatchCount(Sliceds) > 0)
+                //If the last group found matches the current group 
+                if (allDestructionGroups[i].MatchCount(Sliceds) > 0)
                 {
                     Debug.Log("MatchCountFinded");
-                    allSliceds[i] = allSliceds[i].CombineDiff(Sliceds);
+                    //Merge the last found group with the previous one. (i)
+                    allDestructionGroups[i] = allDestructionGroups[i].CombineDiff(Sliceds);
+                    //set the process bool to true
                     added = true;
+                    //No need to control others 
                     break;
                 }
             }
+            //f the current group is complete and not merged with one of the previous groups 
             if (Sliceds.Count > 0 && !added)
             {
-                allSliceds.Add(Sliceds);
+                //Add to found groups 
+                allDestructionGroups.Add(Sliceds);
             }
         }
-        Debug.Log("Total " + allSliceds.Count + " group");
-        foreach (var item in allSliceds)
+        Debug.Log("Total " + allDestructionGroups.Count + " group");
+        // loop to process all found groups
+        foreach (var item in allDestructionGroups)
         {
+            //convert groups to item list with sequence numbers 
             List<GameItem> DestroyingItems = item.ConvertAll(x => this[x]);
+            //skip the step if the group is not complete and contains empty objects 
             if (DestroyingItems.Any(x => x == -1)&&DestroyingItems.Count<3) continue;
+
+            //center of objects to be destroyed
+            Vector3 CenterofDestruction = DestroyingItems.CenterPositionofItems();
+            //Points multiplier to be awarded 
             int ScorePiece = 0;
-            DestroyingItems.ForEach(x => ScorePiece += x.HaveStar ? 4 : 1);
-            GameManager.instance.OnSliced(ScorePiece, DestroyingItems.CenterPositionofItems());
+            // We looped as much as all items of current group and 
             foreach (var item2 in DestroyingItems)
             {
+                //increased the score multiplier according to the status of the items
+                ScorePiece += item2.HaveStar ? 4 : 1;
+                //push the object into the pool 
                 item2.Destruction();
+               // delete from grid list
                 RemoveItem(item2);
             }
+            //We notified the game manager that there was a Destruction 
+            GameManager.instance.OnSliced(ScorePiece,CenterofDestruction);
         }
-        bool result = allSliceds.Count > 0;
-        if (result)
+        //
+        if (allDestructionGroups.Count > 0)
         {
+            //ReCreate controls if at least 1 item group is destroyed 
             FallController().InvokeIE();
         }
-        return result;
+        //Return result based on the number of destructions 
+        return allDestructionGroups.Count > 0;
     }
     /// <summary>
     /// Enumerator where new items are taken into missing parts after destruction.
@@ -101,56 +122,89 @@ public class GameGrid
     /// <returns></returns>
     public IEnumerator FallController()
     {
+        //loop as much as the grid's column number (column) 
         for (int i = 0; i < column; i++)
         {
+            //finds current column(i) items
             List<GameItem> columnItems = ColumnItems(i);
+            //sort them by row ascending 
             columnItems.Sort((x, y) => x.gridIndex.y.CompareTo(y.gridIndex.y));
+            //loop as much as all column items count
             for (int j = 0; j < columnItems.Count; j++)
             {
+                //keep the item variable
                 GameItem columnItemx = columnItems[j];
+                //how many units away from where it should be 
                 int dis = (int)(columnItemx.gridIndex.y) - j;
+                //reassign the sequence number (y/row)
                 columnItemx.gridIndex.y = j;
+                //If it is far from where it should be
                 if (dis > 0)
                 {
+                    //determine your new position 
                     Vector3 newpos = columnItemx.transform.position - (Vector3.up * GameManager.instance.runtimeVars.movementMultipery * dis);
+                    //move to position smoothly
                     columnItemx.MoveNewPos(newpos, .25f);
+                    //wait very little time between each item 
                     yield return new WaitForSeconds(.025f);
                 }
             }
 
         }
+        //wait until all items drop 
         yield return new WaitForSeconds(.5f);
+        //After dropping down, control of destruction again and if there is no destruction 
         if (!DestructionControl())
         {
+            //loop as much as the grids column number again(column) 
             for (int i = 0; i < column; i++)
             {
+                //finds current column(i) items 
                 List<GameItem> columnItems = ColumnItems(i);
+                //number of objects required for the column
                 int requered = row - columnItems.Count;
+                
                 if (requered > 0)
                 {
+                    //invoke the action that is installed in the game manager
                     ColumnFillAction(i);
                     yield return new WaitForSeconds(.1f);
                 }
             }
+            //wait until all the columns are filled 
             yield return new WaitForSeconds(1f);
+            //When all the columns are full again, check to destroy again and if there is no destruction
             if (!DestructionControl())
             {
+                //notify game manager that the destruction is finished 
                 GameManager.instance.OnSliceEnd();
-                if (BombExposionControl())
+                //do bomb explosion check  
+                if (BombExposionControl())// if exploded 
                 {
                     Debug.Log("Bomba Patladı");
+                    //plays explosion sound
                     AudioManager.PlayOneShotAudio("explosion");
+                    //finish grid
                     Finish();
+                    //notify the game manager that the game is over with description
                     GameManager.instance.GameOver("Bomb Explodes");
                 }
-                else if (!CanMoveControl())
+                //check for ability to move 
+                else if (!CanMoveControl())//if there are no more moves to be made 
                 {
                     Debug.Log("Hamle kalmadı");
+                    //plays (no move) sound
                     AudioManager.PlayOneShotAudio("nomove");
+                    //finish grid
                     Finish();
+                    //notify the game manager that the game is over with description
                     GameManager.instance.GameOver("There is no Movement to Continue");
                 }
-                isBusy = false;
+                else //continue game
+                {
+                    isBusy = false;
+                }
+               
             }
         }
 
@@ -394,11 +448,15 @@ public class GameGrid
     /// </summary>
     public void Finish()
     {
+        //Cancel last selection
         Deselect();
+        //loop all items
         for (int i = 0; i < items.Count; i++)
         {
+            //destroy item
             items[i].Destruction();
         }
+        //clear item list
         items.Clear();
     }
 
