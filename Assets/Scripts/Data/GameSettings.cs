@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "Settings", menuName = "Hexfall/GameSettings", order = 1)]
 public class GameSettings : ScriptableObject

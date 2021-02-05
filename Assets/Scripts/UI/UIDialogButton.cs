@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
 
 public class UIDialogButton : MonoBehaviour
 {
@@ -15,6 +12,6 @@ public class UIDialogButton : MonoBehaviour
         button.onClick = new Button.ButtonClickedEvent();
         button.onClick.AddListener(dWButtonData.onClick);
         button.onClick.AddListener(UIManager.instance.HideDialogWindow);
-        
+        button.onClick.AddListener(()=> { AudioManager.PlayOneShotAudio("click"); });
     }
 }

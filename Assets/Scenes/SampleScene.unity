@@ -217,7 +217,7 @@ RectTransform:
   - {fileID: 115115867}
   - {fileID: 1407133179}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -442,7 +442,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &106517445
 GameObject:
@@ -2472,6 +2472,7 @@ GameObject:
   - component: {fileID: 1367843456}
   - component: {fileID: 1367843457}
   - component: {fileID: 1367843458}
+  - component: {fileID: 1367843459}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -2491,7 +2492,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fea6c222e8474ad19452fd7a89134ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameSettings: {fileID: 0}
+  gameSettings: {fileID: 11400000, guid: 4f5ca5c4ebca545e398fb5b30778cd6d, type: 2}
   runtimeVars:
     isGameStarted: 0
     isPaused: 0
@@ -2502,14 +2503,15 @@ MonoBehaviour:
     deltaClickPos: {x: 0, y: 0, z: 0}
     score: 0
     highScore: 0
+    deltaScore: 0
     movesCount: 0
     canUndo: 0
     undoRight: 0
     bombScore: 0
+    tempscore: 0
   generalGameVars:
     gameItemPrefab: {fileID: 1447377569133719335, guid: cd2a80e04e38d43519759279ff349679,
       type: 3}
-    gameItemPosition: {fileID: 1766243374}
     selectionCenterObject: {fileID: 4504052007735656366, guid: d456456a665d44a408f08f01a12d2704,
       type: 3}
     flyingScorePrefab: {fileID: 751981987796622234, guid: fbf9757e6c6f04c10987fdf94c218c81,
@@ -2659,7 +2661,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 431c2f9b3dbea4d688d40fe2fde14161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allFreeObjects: []
 --- !u!114 &1367843457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2690,15 +2691,27 @@ MonoBehaviour:
   highScoreLabel: {fileID: 1614512044}
   movesCountLabel: {fileID: 761472529}
   undoRightLabel: {fileID: 2093200385}
+  undoButton: {fileID: 115115866}
   menuAnimator: {fileID: 143626433}
   menuContainer: {fileID: 143626429}
-  undoButton: {fileID: 115115866}
   dialogWindowContainer: {fileID: 1407133178}
   dialogWindowTitleLabel: {fileID: 1800825679}
   dialogWindowDescLabel: {fileID: 1005970112}
   dialogWindowButtonContainer: {fileID: 994376761}
   dialogWindowButtonPrefab: {fileID: 4840391449977346421, guid: dcfaf303e12c94beeafc55bd25425acf,
     type: 3}
+--- !u!114 &1367843459
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1367843451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09cf741aca1f74b47ba11f708b7d9012, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1407133178
 GameObject:
   m_ObjectHideFlags: 0
@@ -3610,7 +3623,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1759097991
 GameObject:
@@ -3740,36 +3753,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1759097991}
   m_CullTransparentMesh: 0
---- !u!1 &1766243373
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1766243374}
-  m_Layer: 0
-  m_Name: GameItemPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 3443629218296621865, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1766243374
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1766243373}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.99, y: -3.04, z: -12.687892}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1800825677
 GameObject:
   m_ObjectHideFlags: 0

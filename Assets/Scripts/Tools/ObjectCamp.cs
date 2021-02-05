@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -9,13 +8,14 @@ public class ObjectCamp : MonoBehaviour
 {
     public static ObjectCamp instance;
 
-    public List<Object> allFreeObjects;
+    private List<Object> allFreeObjects;
     private List<System.Tuple<System.Type, System.Func<Object>>> creationRules;
     private List<System.Tuple<System.Type, System.Action<Object>>> pushActions;
     private List<System.Tuple<System.Type, System.Action<Object>>> takeActions;
 
     private void Awake()
     {
+        allFreeObjects = new List<Object>();
         instance = this;
         creationRules = new List<System.Tuple<System.Type, System.Func<Object>>>();
         creationRules.Add(new System.Tuple<System.Type, System.Func<Object>>(typeof(GameItem), () =>

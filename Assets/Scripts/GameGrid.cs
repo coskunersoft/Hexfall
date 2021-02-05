@@ -6,7 +6,6 @@ using DG.Tweening;
 
 public class GameGrid
 {
-
     public GameGrid(int _row, int _column)
     {
         isBusy = true;
@@ -48,20 +47,24 @@ public class GameGrid
     /// <returns></returns>
     public bool DestructionControl()
     {
+        //Make an integer list inside list
         List<List<int>> allSliceds = new List<List<int>>();
+        //Find the elimination rule based on the selected pattern 
         var sliceRule = GameManager.instance.runtimeVars.selectedPattern.PatternRule();
+        //Loops as long as all items
         foreach (var item in items)
         {
+            //Exacute function and find the sequence number of objects to be deleted 
             List<int> Sliceds = sliceRule.Invoke(item, this);
+            //make a control boolen for process control 
             bool added = false;
+
             for (int i = 0; i < allSliceds.Count; i++)
             {
                 if (allSliceds[i].MatchCount(Sliceds) > 0)
                 {
                     Debug.Log("MatchCountFinded");
-                    List<int> total = allSliceds[i].CombineDiff(Sliceds);
-                    allSliceds[i].Clear();
-                    allSliceds[i].AddRange(total);
+                    allSliceds[i] = allSliceds[i].CombineDiff(Sliceds);
                     added = true;
                     break;
                 }
@@ -189,20 +192,29 @@ public class GameGrid
     {
         if (isBusy) return;
 
+        //check if there is already a choice 
         if (selectData.isSelected)
         {
             Deselect();
         }
 
+        //take the selection rule according to the pattern 
         var selectionRule = GameManager.instance.runtimeVars.selectedPattern.NeighborRule();
+        //Find the click point 
         Vector3 ClickPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
+        //Multiply the horizontal and vertical length of the element and get the square root 
         float mindis = Mathf.Sqrt(GameManager.instance.runtimeVars.movementMultiperx * GameManager.instance.runtimeVars.movementMultipery);
+        //Selected Objects were found by running the action found according to the pattern 
         List<GameItem> Group = selectionRule(item, this, ClickPos, mindis);
+        //Sort these items by grid ocation
         Group.Sort((x, y) => ((int)x).CompareTo(y));
+
         selectData.isSelected = true;
+        //Push to selected list
         selectData.LastSelected = Group;
+        //Focus Selected Objects
         selectData.LastSelected.ForEach(x => x.FocusUnFocus(true));
+        //Report this action to the game manager 
         GameManager.instance.OnSelectGroup(Group.CenterPositionofItems());
     }
     /// <summary>
@@ -210,14 +222,19 @@ public class GameGrid
     /// </summary>
     public void Deselect()
     {
+        //Check if there is any group selected 
         if (!selectData.isSelected) return;
+        //Remove the selection icon of all entities and subtract from parent
         selectData.LastSelected.ForEach(x =>
         {
             x.transform.SetParent(null);
             x.FocusUnFocus(false);
         });
+        //Set selection status false
         selectData.isSelected = false;
+        //Set Selected group empity
         selectData.LastSelected = new List<GameItem>();
+        //Report this action to the game manager 
         GameManager.instance.OnGroupSelectCancel();
     }
     /// <summary>
@@ -372,7 +389,9 @@ public class GameGrid
         
         return result;
     }
-
+    /// <summary>
+    /// Finish grid and destroy objects
+    /// </summary>
     public void Finish()
     {
         Deselect();
@@ -404,6 +423,19 @@ public class GameGrid
         }
         return result;
     }
+    public static implicit operator List<GridItemTemp>(GameGrid grid)
+    {
+        List<GridItemTemp> result = new List<GridItemTemp>();
+        for (int i = 0; i < grid.column; i++)
+        {
+            for (int j = 0; j < grid.row; j++)
+            {
+                GameItem itemx = grid.items.Find(x => x.gridIndex == new Vector2(i, j));
+                result.Add(new GridItemTemp(itemx.ItemColor, itemx.bombCounter, itemx.HaveStar));
+            }
+        }
+        return result;
+    }
 
     /// <summary>
     /// Struct which stores information about group selection  
@@ -416,6 +448,8 @@ public class GameGrid
 
 
 }
+
+[System.Serializable]
 public class GridItemTemp
 {
     public GridItemTemp(int _color,int _bomb,bool _star)

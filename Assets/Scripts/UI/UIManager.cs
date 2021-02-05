@@ -12,17 +12,19 @@ public class UIManager : MonoBehaviour
         instance = this;
     }
 
+    [Header("Hud")]
     public Text scoreLabel;
     public Text highScoreLabel;
     public Text movesCountLabel;
     public Text undoRightLabel;
+    public GameObject undoButton;
 
+    [Header("Menu")]
     public Animator menuAnimator;
     public GameObject menuContainer;
 
-    public GameObject undoButton;
-
-
+   
+    [Header("Dialog Menu")]
     public GameObject dialogWindowContainer;
     public Text dialogWindowTitleLabel;
     public Text dialogWindowDescLabel;
